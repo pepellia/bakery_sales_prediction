@@ -1,9 +1,13 @@
 # Benötigte Bibliotheken importieren
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Stil für die Plots setzen
+sns.set_theme(style="whitegrid")
 
 # Daten einlesen
 print("Lese Daten ein...")
@@ -56,12 +60,6 @@ for idx, feature in enumerate(feature_columns):
 print("\nFertig! Modell wurde erfolgreich trainiert.")
 
 print("\nErstelle Visualisierungen...")
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Stil für die Plots setzen
-sns.set_theme(style="whitegrid")
-
 # 1. Tatsächliche vs. Vorhergesagte Umsätze
 plt.figure(figsize=(12, 8))
 plt.scatter(y_test, y_pred, alpha=0.5)
