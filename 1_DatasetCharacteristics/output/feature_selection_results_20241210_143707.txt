@@ -1,0 +1,40 @@
+Feature Selection Results
+=======================
+
+Best Feature Combination:
+- Warengruppe_2 (Brötchen)
+- Warengruppe_4 (Feingebäck)
+- Warengruppe_1 (Brot)
+- Warengruppe_5 (Kuchen)
+- season_summer
+- temp_warm
+- Warengruppe_6 (Saisonales Brot)
+- is_weekend
+- Warengruppe_3 (Croissant)
+- Wochentag
+- temp_cold
+- season_fall
+- temp_mild
+- season_winter
+- Bewoelkung
+
+Adjusted R²: 0.7191
+
+Model Coefficients:
+Warengruppe_2: 22735602529151.6641
+Warengruppe_4: 22735602528837.2930
+Warengruppe_1: 22735602528872.2695
+Warengruppe_5: 22735602529025.7109
+season_summer: 38.5225
+temp_warm: -11.0585
+Warengruppe_6: 22735602528839.3438
+is_weekend: 46.7400
+Warengruppe_3: 22735602528912.2383
+Wochentag: 1.3631
+temp_cold: -41.8671
+season_fall: -8.9096
+temp_mild: -30.3570
+season_winter: -15.2165
+Bewoelkung: -0.8184
+
+Intercept: -22735602528742.6367
