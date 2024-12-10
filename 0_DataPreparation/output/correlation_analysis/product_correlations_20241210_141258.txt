@@ -1,0 +1,31 @@
+Product Group Correlation Analysis
+================================
+
+Full Correlation Matrix
+-----------------------
+                 Brot  Brötchen  Croissant  Feingebäck  Kuchen  Saisonales Brot
+Brot             1.00      0.25       0.33       -0.24    0.30            -0.06
+Brötchen         0.25      1.00       0.90        0.29    0.51            -0.13
+Croissant        0.33      0.90       1.00        0.14    0.43            -0.22
+Feingebäck      -0.24      0.29       0.14        1.00    0.25            -0.03
+Kuchen           0.30      0.51       0.43        0.25    1.00            -0.11
+Saisonales Brot -0.06     -0.13      -0.22       -0.03   -0.11             1.00
+
+Strongest Positive Correlations
+-------------------------------
+ Product1  Product2  Correlation
+ Brötchen Croissant     0.904985
+ Brötchen    Kuchen     0.507946
+Croissant    Kuchen     0.430600
+     Brot Croissant     0.325178
+     Brot    Kuchen     0.300934
+
+Strongest Negative Correlations
+-------------------------------
+ Product1        Product2  Correlation
+     Brot      Feingebäck    -0.241261
+Croissant Saisonales Brot    -0.217301
+ Brötchen Saisonales Brot    -0.126340
+   Kuchen Saisonales Brot    -0.110642
+     Brot Saisonales Brot    -0.059628
+

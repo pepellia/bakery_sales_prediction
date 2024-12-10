@@ -1,0 +1,24 @@
+Enhanced Linear Regression Model Results
+=====================================
+
+Model Performance:
+RMSE: 64.27
+R²: 0.7643
+
+Top 15 Most Important Features:
+          Feature  Coefficient
+20  Warengruppe_2   213.371882
+5   is_windjammer   114.638558
+22  Warengruppe_4  -102.242798
+24  Warengruppe_6   -99.955143
+23  Warengruppe_5    87.176600
+19  Warengruppe_1   -69.519301
+15  season_winter   -55.742821
+17  season_summer    46.351432
+11     is_weekend    46.236301
+4         is_kiwo    36.889057
+21  Warengruppe_3   -28.831240
+18    season_fall    25.875335
+28       temp_hot    18.871420
+25      temp_cold   -17.280293
+16  season_spring   -16.483946

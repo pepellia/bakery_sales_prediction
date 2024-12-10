@@ -1,0 +1,21 @@
+Sales Correlations Analysis
+=========================
+
+Sales Correlations (sorted by strength)
+---------------------------------------
+Umsatz                 1.000000
+Temperatur             0.222935
+Bewoelkung            -0.089916
+KielerWoche            0.058244
+Windgeschwindigkeit    0.014705
+dtype: float64
+
+Full Correlation Matrix
+-----------------------
+                       Umsatz  KielerWoche  Temperatur  Bewoelkung  Windgeschwindigkeit
+Umsatz               1.000000     0.058244    0.222935   -0.089916             0.014705
+KielerWoche          0.058244     1.000000    0.138339    0.011251             0.020500
+Temperatur           0.222935     0.138339    1.000000   -0.391635             0.003734
+Bewoelkung          -0.089916     0.011251   -0.391635    1.000000             0.041809
+Windgeschwindigkeit  0.014705     0.020500    0.003734    0.041809             1.000000
+

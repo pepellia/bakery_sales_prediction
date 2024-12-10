@@ -1,0 +1,51 @@
+Windjammer Analysis Statistics
+============================
+
+General Sales
+-------------
+count    9309.000000
+mean      206.317732
+std       143.969018
+min         7.051201
+25%        96.847762
+50%       161.676202
+75%       280.107586
+max      1879.461831
+Name: Umsatz, dtype: float64
+
+Parade Day Sales
+----------------
+count     25.000000
+mean     367.352722
+std      243.504143
+min       49.884049
+25%      169.797038
+50%      339.700511
+75%      498.133552
+max      861.858617
+Name: Umsatz, dtype: float64
+
+Regular Saturday Sales
+----------------------
+count    1311.000000
+mean      238.916510
+std       164.366696
+min        18.574458
+25%       111.076118
+50%       194.365188
+75%       325.881820
+max      1705.144205
+Name: Umsatz, dtype: float64
+
+Parade Saturday Sales
+---------------------
+count     25.000000
+mean     367.352722
+std      243.504143
+min       49.884049
+25%      169.797038
+50%      339.700511
+75%      498.133552
+max      861.858617
+Name: Umsatz, dtype: float64
+
