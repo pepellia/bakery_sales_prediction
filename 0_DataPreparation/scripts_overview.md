@@ -1,54 +1,50 @@
-# Übersicht der Python-Skripte für Bakery Sales Prediction
+# Scripts Overview
 
-## Aktuelle Skripte (Stand: Dezember 2024)
+Last updated: December 6, 2023
 
-1. `analyse_umsatz.py` (18. November 2024)
-   - Hauptskript für die explorative Datenanalyse der Umsatzdaten
-   - Visualisierung von Umsatzverteilungen und Korrelationen
-   - Analyse von Temperatur- und Wettereinflüssen
+## Data Preparation Scripts
 
-2. `create_windjammer_csv.py` (21. November 2024)
-   - Erstellung der Windjammer-Ereignisdaten
-   - Identifikation der Windjammerparade-Tage
-   - Generierung der CSV-Datei mit Parade-Terminen
+### Core Data Processing
+- `data_preparation.py` (03:54 PM) - Main script for data preprocessing and feature engineering
+- `config.py` (04:06 PM) - Configuration file containing constants and shared functions
+- `data_preparation.ipynb` (01:18 PM) - Jupyter notebook version with exploratory analysis
 
-3. `analyse_windjammer.py` (21. November 2024)
-   - Spezialisierte Analyse des Windjammerparade-Einflusses
-   - Vergleich von normalen und Parade-Tagen
-   - Berechnung von Umsatzunterschieden
+### Analysis Scripts
+- `analyse_umsatz.py` (Nov 25) - Initial sales data analysis
+- `analyse_correlations.py` (04:11 PM) - Analysis of correlations between product groups
+- `analyse_windjammer.py` (Nov 25) - Analysis of Windjammer event impact
+- `create_windjammer_csv.py` (Nov 25) - Script to create Windjammer events dataset
 
-4. `data_preparation.py` (3. Dezember 2024)
-   - Zentrale Datenvorbereitungsklasse
-   - Feature Engineering und Datenaufbereitung
-   - Bereitstellung der Trainings- und Testdaten
+### Machine Learning Scripts
+- `linear_regression_umsatz.py` (04:12 PM) - Basic linear regression model
+- `linear_regression_umsatz_v2.py` (Dec 8) - Enhanced version with additional features
+- `linear_regression_umsatz.ipynb` (01:18 PM) - Interactive model development notebook
 
-5. `linear_regression_umsatz.py` (3. Dezember 2024)
-   - Implementierung des linearen Regressionsmodells
-   - Feature Engineering und Modelltraining
-   - Modellauswertung und Visualisierungen
+### Feature Engineering
+- `feature_engineering_todos.md` (04:07 PM) - Documentation of planned feature improvements
 
-## Funktionen und Features
+### Input Data Files
+- `umsatzdaten_gekuerzt.csv` (Nov 21) - Main sales data
+- `wetter.csv` (Nov 21) - Weather data
+- `kiwo.csv` (Nov 21) - Kieler Woche event data
+- `windjammer.csv` (12:56 PM) - Windjammer event data
+- `Feiertage-SH.csv` (Nov 28) - Public holidays in Schleswig-Holstein
+- `Schulferientage-SH.csv` (Nov 28) - School holidays in Schleswig-Holstein
 
-### Datenanalyse und Visualisierung
-- Umsatzverteilungen und Trends
-- Temperatur- und Wettereinflüsse
-- Kieler Woche und Windjammerparade-Effekte
-- Korrelationsanalysen
+### Generated Visualizations
+- `warengruppen_correlations.png` (04:10 PM) - Product group correlation heatmap
+- `feature_importance.png` (04:10 PM) - Feature importance visualization
+- `prediction_vs_actual.png` (04:10 PM) - Model prediction comparison
+- `umsatz_trend.png` (Nov 28) - Sales trend analysis
+- `umsatz_by_group.png` (Nov 28) - Sales by product group
+- `umsatz_by_weekday.png` (Nov 28) - Sales patterns by weekday
+- `umsatz_prediction.png` (Nov 28) - Prediction analysis visualization
 
-### Modellierung
-- Feature Engineering mit zeitbasierten Features
-- One-hot Encoding für kategorische Variablen
-- Modelltraining und Evaluation
-- Vorhersagegenauigkeitsanalysen
+### Example and Documentation Files
+- `umsatzdaten_gekuerzt_example.csv` (Dec 3) - Example data structure
+- `INSTRUCTIONS.md` (Nov 21) - Project instructions
+- `README.md` (Nov 21) - Project overview
 
-### Visualisierungen
-- Umsatzvorhersagen (umsatz_prediction.png)
-- Wochentagsanalysen (umsatz_by_weekday.png)
-- Warengruppenanalysen (umsatz_by_group.png)
-- Zeitliche Trends (umsatz_trend.png)
-- Feature-Wichtigkeit (feature_importance.png)
-
-## Verwendete Datendateien
-- umsatzdaten_gekuerzt.csv (Hauptdatensatz)
-- windjammer_dates.csv (Windjammerparade-Termine)
-- wetter_data.csv (Wetterdaten)
+## Directory Structure
+- `visualizations/` - Directory containing additional plots and figures
+- `__pycache__/` - Python cache directory (not version controlled)

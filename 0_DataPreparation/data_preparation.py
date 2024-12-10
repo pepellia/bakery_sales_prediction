@@ -1,50 +1,85 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 import os
+from config import (TRAIN_PATH, TEST_PATH, WEATHER_PATH, KIWO_PATH,
+                   HOLIDAYS_PATH, SCHOOL_HOLIDAYS_PATH, FEATURES_DIR)
 
 class DataPreparation:
     def __init__(self):
         """
-        Initialisiert die DataPreparation-Klasse.
-        Speichert Transformationen, die auf Trainingsdaten berechnet wurden.
+        Initialize the DataPreparation class.
+        Stores transformations computed on training data.
         """
         self.train_temp_mean = None
         self.train_temp_std = None
         self.numerical_scaler = StandardScaler()
-        self.categorical_encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+        self.categorical_encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore', drop='first')
         
-        # Temperatur-Kategorien für verschiedene Jahreszeiten
+        # Temperature categories for different seasons
         self.temp_categories = {
-            'winter': {'kalt': (-float('inf'), 5), 'mild': (5, 10), 'warm': (10, float('inf'))},
-            'spring': {'kalt': (-float('inf'), 10), 'mild': (10, 15), 'warm': (15, float('inf'))},
-            'summer': {'kalt': (-float('inf'), 15), 'mild': (15, 20), 'warm': (20, float('inf'))},
-            'fall': {'kalt': (-float('inf'), 8), 'mild': (8, 13), 'warm': (13, float('inf'))}
+            'winter': {'cold': (-float('inf'), 5), 'mild': (5, 10), 'warm': (10, float('inf'))},
+            'spring': {'cold': (-float('inf'), 10), 'mild': (10, 15), 'warm': (15, float('inf'))},
+            'summer': {'cold': (-float('inf'), 15), 'mild': (15, 20), 'warm': (20, float('inf'))},
+            'fall': {'cold': (-float('inf'), 8), 'mild': (8, 13), 'warm': (13, float('inf'))}
         }
     
     def load_data(self):
         """
-        Lädt alle benötigten Datensätze.
+        Load all required datasets.
         """
-        # Get the current directory (where data_preparation.py is located)
-        current_dir = os.path.dirname(os.path.abspath(__file__))
+        print("Loading and preparing data...")
         
-        # Hauptdaten laden
-        umsatz_df = pd.read_csv(os.path.join(current_dir, "umsatzdaten_gekuerzt.csv"))
-        wetter_df = pd.read_csv(os.path.join(current_dir, "wetter.csv"))
-        kiwo_df = pd.read_csv(os.path.join(current_dir, "kiwo.csv"))
+        # Load main data (YYYY-MM-DD format)
+        train_df = pd.read_csv(TRAIN_PATH)
+        wetter_df = pd.read_csv(WEATHER_PATH)
+        kiwo_df = pd.read_csv(KIWO_PATH)
         
-        # Datum in datetime umwandeln
-        for df in [umsatz_df, wetter_df, kiwo_df]:
+        # Convert dates for main data (YYYY-MM-DD format)
+        for df in [train_df, wetter_df, kiwo_df]:
             df['Datum'] = pd.to_datetime(df['Datum'])
-            
-        # Daten zusammenführen
-        merged_df = umsatz_df.merge(wetter_df, on="Datum", how="left")
-        final_df = merged_df.merge(kiwo_df, on="Datum", how="left")
         
-        # KielerWoche mit 0 auffüllen, wo NaN
-        final_df['KielerWoche'] = final_df['KielerWoche'].fillna(0)
+        # Load new datasets with semicolon separator (DD.MM.YYYY format)
+        feiertage_df = pd.read_csv(HOLIDAYS_PATH, sep=';')
+        schulferien_df = pd.read_csv(SCHOOL_HOLIDAYS_PATH, sep=';')
         
-        return final_df
+        # Convert dates for new datasets (DD.MM.YYYY format)
+        for df in [feiertage_df, schulferien_df]:
+            df['Datum'] = pd.to_datetime(df['Datum'], format='%d.%m.%Y')
+        
+        # Rename 'Ferientag' to 'Schulferien'
+        schulferien_df = schulferien_df.rename(columns={'Ferientag': 'Schulferien'})
+        
+        print(f"Number of holidays: {feiertage_df['Feiertag'].sum()}")
+        print(f"Number of school holidays: {schulferien_df['Schulferien'].sum()}")
+        
+        # Merge data
+        merged_df = train_df.merge(wetter_df, on="Datum", how="left")
+        merged_df = merged_df.merge(kiwo_df, on="Datum", how="left")
+        merged_df = merged_df.merge(feiertage_df, on="Datum", how="left")
+        merged_df = merged_df.merge(schulferien_df, on="Datum", how="left")
+        
+        # Fill missing values
+        merged_df['KielerWoche'] = merged_df['KielerWoche'].fillna(0)
+        merged_df['Feiertag'] = merged_df['Feiertag'].fillna(0)
+        merged_df['Schulferien'] = merged_df['Schulferien'].fillna(0)
+        
+        print(f"Dataset contains {len(merged_df)} rows")
+        
+        return merged_df
+    
+    def save_features(self, X, y, filename):
+        """
+        Save generated features to a file
+        """
+        # Combine features and target
+        data = pd.concat([X, y], axis=1)
+        
+        # Create output path
+        output_path = os.path.join(FEATURES_DIR, filename)
+        
+        # Save to CSV
+        data.to_csv(output_path, index=False)
+        print(f"Features saved to: {output_path}")
     
     def split_data(self, df):
         """
@@ -177,7 +212,7 @@ class DataPreparation:
         categorical_features = [
             'Position_im_Monat', 'Jahreszeit', 
             'Temp_Kategorie_Basis', 'Temp_Kategorie_Saison',
-            'Warengruppe'  # Warengruppe als kategorisches Feature
+            'Warengruppe', 'Feiertag', 'Schulferien'  # Warengruppe als kategorisches Feature
         ]
         
         # Feature Matrices erstellen
@@ -210,31 +245,29 @@ class DataPreparation:
         
         return X, y
 
-# Beispiel für die Verwendung:
+# Example usage:
 if __name__ == "__main__":
-    # Instanz erstellen
+    # Create instance
     prep = DataPreparation()
     
-    # Daten laden
-    print("Lade Daten...")
+    # Load data
+    print("Loading data...")
     data = prep.load_data()
     
-    # In Train und Test aufteilen
-    print("\nTeile Daten in Training und Test...")
+    # Split into train and test
+    print("\nSplitting data into training and test...")
     train_data, test_data = prep.split_data(data)
     
-    # Trainingsdaten aufbereiten
-    print("\nBereite Trainingsdaten auf...")
+    # Prepare training data
+    print("\nPreparing training data...")
     X_train, y_train = prep.prepare_data(train_data, is_training=True)
     
-    # Testdaten aufbereiten
-    print("\nBereite Testdaten auf...")
+    # Save features
+    prep.save_features(X_train, y_train, 'train_features.csv')
+    
+    # Prepare test data
+    print("\nPreparing test data...")
     X_test, y_test = prep.prepare_data(test_data, is_training=False)
     
-    print("\nFeature-Übersicht:")
-    print(f"Anzahl Features: {X_train.shape[1]}")
-    print("\nNumerische Features:", X_train.filter(like='Temperatur').columns.tolist())
-    print("\nKategorische Features (encoded):", X_train.filter(like='Warengruppe').columns.tolist())
-    
-    print("\nErste Zeilen der aufbereiteten Daten:")
-    print(X_train.head())
+    # Save features
+    prep.save_features(X_test, y_test, 'test_features.csv')

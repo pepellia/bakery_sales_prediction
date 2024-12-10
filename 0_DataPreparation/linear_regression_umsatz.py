@@ -1,130 +1,138 @@
-# Benötigte Bibliotheken importieren
 import pandas as pd
-from sklearn.model_selection import train_test_split
+import numpy as np
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+import sys
 
-# Stil für die Plots setzen
-sns.set_theme(style="whitegrid")
+# Get the directory where this script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 
-# Daten einlesen
-print("Lese Daten ein...")
-df = pd.read_csv('umsatzdaten_gekuerzt.csv')
-print(f"Datensatz geladen: {len(df)} Zeilen")
+# Add the parent directory to Python path for imports
+sys.path.insert(0, os.path.join(PROJECT_ROOT, '0_DataPreparation'))
+from config import (TRAIN_PATH, VIZ_DIR, WARENGRUPPEN, get_warengruppe_name)
 
-# Datum in datetime umwandeln
-print("\nKonvertiere Datum...")
-df['Datum'] = pd.to_datetime(df['Datum'])
+def prepare_features(df):
+    """Prepare basic features for the model"""
+    print("Preparing features...")
+    
+    # Convert date to datetime
+    df['Datum'] = pd.to_datetime(df['Datum'])
+    
+    # Create basic temporal features
+    df['Jahr'] = df['Datum'].dt.year
+    df['Monat'] = df['Datum'].dt.month
+    df['Wochentag'] = df['Datum'].dt.dayofweek
+    
+    # Create one-hot encoding for product groups
+    product_dummies = pd.get_dummies(df['Warengruppe'], prefix='Warengruppe')
+    df = pd.concat([df, product_dummies], axis=1)
+    
+    return df
 
-# Feature Engineering
-print("\nErstelle Features...")
-df['Jahr'] = df['Datum'].dt.year
-df['Monat'] = df['Datum'].dt.month
-df['Wochentag'] = df['Datum'].dt.dayofweek  # 0 = Montag, 6 = Sonntag
+def train_model(X_train, y_train, X_test, y_test):
+    """Train and evaluate the linear regression model"""
+    print("\nTraining model...")
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    
+    # Make predictions
+    print("Making predictions...")
+    y_pred = model.predict(X_test)
+    
+    # Evaluate model
+    mse = mean_squared_error(y_test, y_pred)
+    rmse = np.sqrt(mse)
+    r2 = r2_score(y_test, y_pred)
+    
+    return model, y_pred, rmse, r2
 
-# One-hot encoding für Warengruppe
-print("Erstelle One-hot encoding für Warengruppen...")
-warengruppen_dummies = pd.get_dummies(df['Warengruppe'], prefix='Warengruppe')
-df = pd.concat([df, warengruppen_dummies], axis=1)
+def analyze_feature_importance(model, feature_names, viz_dir):
+    """Analyze and visualize feature importance"""
+    feature_importance = pd.DataFrame({
+        'Feature': feature_names,
+        'Importance': np.abs(model.coef_)
+    })
+    
+    # Rename product group features
+    for col in feature_importance['Feature']:
+        if col.startswith('Warengruppe_'):
+            try:
+                group_nr = int(col.split('_')[1])
+                new_name = f"Warengruppe_{get_warengruppe_name(group_nr)}"
+                feature_importance.loc[feature_importance['Feature'] == col, 'Feature'] = new_name
+            except ValueError:
+                continue
+    
+    feature_importance = feature_importance.sort_values('Importance', ascending=False)
+    
+    # Create visualization
+    plt.figure(figsize=(12, 6))
+    sns.barplot(data=feature_importance.head(10), x='Importance', y='Feature')
+    plt.title('Top 10 Most Important Features')
+    plt.tight_layout()
+    plt.savefig(os.path.join(viz_dir, 'feature_importance.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    return feature_importance
 
-# Features für das Modell auswählen
-feature_columns = ['Jahr', 'Monat', 'Wochentag'] + list(warengruppen_dummies.columns)
-X = df[feature_columns]
-y = df['Umsatz']
+def visualize_predictions(y_test, y_pred, viz_dir):
+    """Create prediction vs actual visualization"""
+    plt.figure(figsize=(10, 6))
+    plt.scatter(y_test, y_pred, alpha=0.5)
+    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+    plt.xlabel('Actual Values')
+    plt.ylabel('Predictions')
+    plt.title('Prediction vs Actual Values')
+    plt.tight_layout()
+    plt.savefig(os.path.join(viz_dir, 'prediction_vs_actual.png'), dpi=300, bbox_inches='tight')
+    plt.close()
 
-print("\nTeile Daten in Training und Test...")
-# Daten in Trainings- und Testset aufteilen
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+def main():
+    """Main function to run the linear regression analysis"""
+    # Create output directories
+    viz_dir = os.path.join(VIZ_DIR, 'linear_regression')
+    os.makedirs(viz_dir, exist_ok=True)
+    
+    # Load data
+    print("Loading data...")
+    df = pd.read_csv(TRAIN_PATH)
+    
+    # Prepare features
+    df = prepare_features(df)
+    
+    # Select features for the model
+    feature_columns = ['Jahr', 'Monat', 'Wochentag'] + [col for col in df.columns if col.startswith('Warengruppe_')]
+    X = df[feature_columns]
+    y = df['Umsatz']
+    
+    # Split data
+    print("\nSplitting data into train and test sets...")
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Train model
+    model, y_pred, rmse, r2 = train_model(X_train, y_train, X_test, y_test)
+    
+    # Print model performance
+    print("\nModel Performance:")
+    print(f"RMSE: {rmse:.2f}")
+    print(f"R²: {r2:.4f}")
+    
+    # Analyze feature importance
+    feature_importance = analyze_feature_importance(model, feature_columns, viz_dir)
+    print("\nTop 10 Most Important Features:")
+    print(feature_importance.head(10))
+    
+    # Create prediction visualization
+    visualize_predictions(y_test, y_pred, viz_dir)
+    
+    print("\nVisualizations saved to:")
+    print(f"1. {os.path.join(viz_dir, 'feature_importance.png')} - Feature Importance")
+    print(f"2. {os.path.join(viz_dir, 'prediction_vs_actual.png')} - Prediction vs Actual Values")
 
-print("\nTrainiere Modell...")
-# Lineares Regressionsmodell erstellen und trainieren
-model = LinearRegression()
-model.fit(X_train, y_train)
-
-print("\nMache Vorhersagen...")
-# Vorhersagen machen
-y_pred = model.predict(X_test)
-
-# Modellperformance evaluieren
-print('\nModell Performance:')
-print('Mean squared error: %.2f' % mean_squared_error(y_test, y_pred))
-print('R² Score: %.2f' % r2_score(y_test, y_pred))
-
-# Koeffizienten des Modells anzeigen
-print('\nModell Koeffizienten:')
-for idx, feature in enumerate(feature_columns):
-    print(f'{feature}: {model.coef_[idx]:.4f}')
-
-print("\nFertig! Modell wurde erfolgreich trainiert.")
-
-print("\nErstelle Visualisierungen...")
-# 1. Tatsächliche vs. Vorhergesagte Umsätze
-plt.figure(figsize=(12, 8))
-plt.scatter(y_test, y_pred, alpha=0.5)
-plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
-plt.xlabel('Tatsächliche Umsätze')
-plt.ylabel('Vorhergesagte Umsätze')
-plt.title('Tatsächliche vs. Vorhergesagte Umsätze')
-plt.tight_layout()
-plt.savefig('umsatz_prediction.png')
-plt.close()
-
-# 2. Durchschnittlicher Umsatz nach Wochentag
-plt.figure(figsize=(12, 6))
-avg_by_day = df.groupby('Wochentag')['Umsatz'].mean()
-avg_by_day.plot(kind='bar')
-plt.title('Durchschnittlicher Umsatz nach Wochentag')
-plt.xlabel('Wochentag (0 = Montag, 6 = Sonntag)')
-plt.ylabel('Durchschnittlicher Umsatz')
-plt.xticks(rotation=0)
-plt.tight_layout()
-plt.savefig('umsatz_by_weekday.png')
-plt.close()
-
-# 3. Durchschnittlicher Umsatz nach Warengruppe
-plt.figure(figsize=(12, 6))
-avg_by_group = df.groupby('Warengruppe')['Umsatz'].agg(['mean', 'std']).round(2)
-avg_by_group['mean'].plot(kind='bar', yerr=avg_by_group['std'], capsize=5)
-plt.title('Durchschnittlicher Umsatz nach Warengruppe (mit Standardabweichung)')
-plt.xlabel('Warengruppe')
-plt.ylabel('Durchschnittlicher Umsatz')
-plt.xticks(rotation=0)
-plt.tight_layout()
-plt.savefig('umsatz_by_group.png')
-plt.close()
-
-# 4. Umsatztrend über die Zeit
-plt.figure(figsize=(15, 6))
-monthly_sales = df.groupby([df['Datum'].dt.to_period('M')])['Umsatz'].mean()
-monthly_sales.plot(kind='line', marker='o')
-plt.title('Durchschnittlicher Umsatz pro Monat')
-plt.xlabel('Datum')
-plt.ylabel('Durchschnittlicher Umsatz')
-plt.grid(True)
-plt.tight_layout()
-plt.savefig('umsatz_trend.png')
-plt.close()
-
-# 5. Modellkoeffizienten Visualisierung
-plt.figure(figsize=(12, 6))
-coef_df = pd.DataFrame({'Feature': feature_columns, 'Coefficient': model.coef_})
-coef_df = coef_df.sort_values('Coefficient', ascending=True)
-sns.barplot(data=coef_df, x='Coefficient', y='Feature')
-plt.title('Einfluss der Features auf den Umsatz')
-plt.xlabel('Koeffizient')
-plt.tight_layout()
-plt.savefig('feature_importance.png')
-plt.close()
-
-print("\nVisualisierungen wurden erstellt und gespeichert:")
-print("1. umsatz_prediction.png - Tatsächliche vs. Vorhergesagte Umsätze")
-print("2. umsatz_by_weekday.png - Umsatz nach Wochentag")
-print("3. umsatz_by_group.png - Umsatz nach Warengruppe")
-print("4. umsatz_trend.png - Umsatztrend über die Zeit")
-print("5. feature_importance.png - Einfluss der Features")
-
-# Zusätzliche statistische Zusammenfassung
-print("\nStatistische Zusammenfassung nach Warengruppe:")
-print(df.groupby('Warengruppe')['Umsatz'].describe().round(2))
+if __name__ == "__main__":
+    main()

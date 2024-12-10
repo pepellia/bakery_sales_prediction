@@ -94,3 +94,23 @@
 - Gibt es saisonale Produkte/Warengruppen?
 - Welche Warengruppen haben starke Abhängigkeiten untereinander?
 - Wie stark unterscheiden sich die Einflussfaktoren zwischen den Warengruppen?
+
+## Erkannte Warengruppen-Korrelationen (Stand: Dez 2024)
+### Starke positive Korrelationen
+- Brötchen und Croissant: sehr stark (0.90)
+- Brötchen und Kuchen: mittel (0.51)
+- Croissant und Kuchen: mittel (0.43)
+
+### Negative Korrelationen
+- Brot und Feingebäck: schwach (-0.24)
+- Croissant und Saisonales Brot: schwach (-0.22)
+
+### TODO: Multikollinearität behandeln
+- [ ] Option 1: Stark korrelierte Warengruppen zusammenfassen
+    - Besonders Brötchen und Croissant wegen sehr hoher Korrelation (0.90)
+    - Eventuell als "Kleingebäck" zusammenfassen
+- [ ] Option 2: Hauptkomponentenanalyse (PCA) für Warengruppen
+- [ ] Option 3: Alternative Modelle testen, die besser mit korrelierten Features umgehen können
+    - Ridge Regression
+    - Lasso Regression
+    - Elastic Net
