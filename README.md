@@ -30,7 +30,7 @@ Regression
 3.  [**Dataset Characteristics (Barcharts)**](1_DatasetCharacteristics/)
 4.  [**Baseline Model**](2_BaselineModel/)
 5.  [**Model Definition and Evaluation**](3_Model/)
-6.  [**Presentation**](4_Presentation/Umsatzvorhersage_Bäckerei_Präsentation (1).pptx)
+6.  [**Presentation**](4_Presentation/Umsatzvorhersage_Bäckerei_Präsentation.pdf)
 
 ## Cover Image
 
