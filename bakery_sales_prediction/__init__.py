@@ -1,1 +1,0 @@
-# This file makes bakery_sales_prediction a Python package 
