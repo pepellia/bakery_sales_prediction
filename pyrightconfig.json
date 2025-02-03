@@ -1,0 +1,18 @@
+{
+    "include": [
+        "3_Model",
+        "2_BaselineModel"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__"
+    ],
+    "ignore": [
+        "3_Model/output",
+        "3_Model/visualizations"
+    ],
+    "reportMissingImports": "warning",
+    "reportGeneralTypeIssues": "warning",
+    "pythonVersion": "3.10",
+    "typeCheckingMode": "basic"
+} 

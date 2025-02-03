@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bakery_sales_prediction"
+version = "0.1"
+description = "Bakery sales prediction project"
+requires-python = ">=3.8"
+
+[tool.pyright]
+include = ["bakery_sales_prediction", "0_DataPreparation", "1_DatasetCharacteristics", "2_BaselineModel", "3_Model"]
+extraPaths = ["."]
+
+[tool.pylance]
+include = ["bakery_sales_prediction", "0_DataPreparation", "1_DatasetCharacteristics", "2_BaselineModel", "3_Model"]
+python.analysis.extraPaths = ["."] 
