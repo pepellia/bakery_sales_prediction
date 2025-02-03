@@ -1,6 +1,8 @@
 # Required libraries
 import pandas as pd
 import numpy as np
+from typing import List, Optional, Dict, Union, Tuple, Any
+from numpy.typing import NDArray
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.preprocessing import StandardScaler
@@ -24,17 +26,17 @@ from bakery_sales_prediction.config import (TRAIN_PATH, WARENGRUPPEN,
 
 class FeatureSelector:
     def __init__(self):
-        self.best_features = None
-        self.best_model = None
-        self.best_adj_r2 = -float('inf')
-        self.output_dir = os.path.join(SCRIPT_DIR, 'output')
-        self.viz_dir = os.path.join(SCRIPT_DIR, 'visualizations')
+        self.best_features: Optional[List[str]] = None
+        self.best_model: Optional[LinearRegression] = None
+        self.best_adj_r2: float = -float('inf')
+        self.output_dir: str = os.path.join(SCRIPT_DIR, 'output')
+        self.viz_dir: str = os.path.join(SCRIPT_DIR, 'visualizations')
         
         # Create output directories
         for directory in [self.output_dir, self.viz_dir]:
             os.makedirs(directory, exist_ok=True)
     
-    def load_and_prepare_data(self):
+    def load_and_prepare_data(self) -> pd.DataFrame:
         """Load and prepare data with all available features"""
         print("Loading and preparing data...")
         
@@ -64,7 +66,7 @@ class FeatureSelector:
         df['is_windjammer'] = df['is_windjammer'].fillna(0)
         
         # Fill missing weather data with median values
-        numeric_columns = df.select_dtypes(include=[np.number]).columns
+        numeric_columns = df.select_dtypes(include='number').columns.tolist()
         for col in numeric_columns:
             if df[col].isnull().any():
                 df[col] = df[col].fillna(df[col].median())
@@ -129,17 +131,17 @@ class FeatureSelector:
             plt.savefig(os.path.join(self.viz_dir, 'missing_values.png'))
             plt.close()
     
-    def analyze_feature_distributions(self, df):
+    def analyze_feature_distributions(self, df: pd.DataFrame) -> None:
         """Analyze and visualize feature distributions"""
         print("\nAnalyzing feature distributions...")
         
-        numeric_features = df.select_dtypes(include=[np.number]).columns
+        numeric_features = df.select_dtypes(include='number').columns.tolist()
         
         # Create distribution plots
         for i, feature in enumerate(numeric_features):
             if feature not in ['Warengruppe', 'Umsatz']:
                 plt.figure(figsize=(10, 6))
-                sns.histplot(data=df, x=feature, bins=30)
+                sns.histplot(data=df, x=feature, stat='count', binwidth=None)
                 plt.title(f'Distribution of {feature}')
                 plt.tight_layout()
                 plt.savefig(os.path.join(self.viz_dir, f'dist_{feature}.png'))
@@ -149,11 +151,11 @@ class FeatureSelector:
         dist_stats = df[numeric_features].describe()
         dist_stats.to_csv(os.path.join(self.output_dir, 'feature_statistics.csv'))
     
-    def analyze_correlations(self, df):
+    def analyze_correlations(self, df: pd.DataFrame) -> None:
         """Analyze feature correlations"""
         print("Analyzing feature correlations...")
         
-        numeric_features = df.select_dtypes(include=[np.number]).columns
+        numeric_features = df.select_dtypes(include='number').columns.tolist()
         corr_matrix = df[numeric_features].corr()
         
         # Create correlation heatmap
@@ -167,7 +169,7 @@ class FeatureSelector:
         # Save correlation matrix
         corr_matrix.to_csv(os.path.join(self.output_dir, 'correlation_matrix.csv'))
     
-    def select_features_univariate(self, X, y, k=10):
+    def select_features_univariate(self, X: pd.DataFrame, y: pd.Series, k: int = 10) -> pd.DataFrame:
         """Select top k features using univariate selection"""
         print(f"\nSelecting top {k} features using univariate selection...")
         
@@ -194,13 +196,13 @@ class FeatureSelector:
         
         return feature_scores
     
-    def adjusted_r2(self, r2, n, p):
+    def adjusted_r2(self, r2: float, n: int, p: int) -> float:
         """Calculate adjusted R²"""
         return 1 - (1 - r2) * (n - 1) / (n - p - 1)
     
-    def evaluate_feature_combination(self, X, y, feature_cols):
+    def evaluate_feature_combination(self, X: pd.DataFrame, y: pd.Series, feature_cols: List[str]) -> Tuple[float, float, LinearRegression]:
         """Evaluate a combination of features"""
-        X_subset = X[list(feature_cols)]
+        X_subset = X[feature_cols]
         
         # Handle missing values
         imputer = SimpleImputer(strategy='median')
@@ -210,12 +212,12 @@ class FeatureSelector:
         model.fit(X_imputed, y)
         y_pred = model.predict(X_imputed)
         
-        r2 = r2_score(y, y_pred)
-        adj_r2 = self.adjusted_r2(r2, len(y), len(feature_cols))
-        rmse = np.sqrt(mean_squared_error(y, y_pred))
+        r2 = float(r2_score(y, y_pred))
+        adj_r2 = float(self.adjusted_r2(r2, len(y), len(feature_cols)))
+        rmse = float(np.sqrt(mean_squared_error(y, y_pred)))
         return adj_r2, rmse, model
     
-    def find_best_features(self, max_features=10, verbose=True):
+    def find_best_features(self, max_features: int = 10, verbose: bool = True) -> tuple[Optional[List[str]], Optional[LinearRegression], float]:
         """Find the best feature combination"""
         # Load and prepare data
         df = self.load_and_prepare_data()
@@ -263,7 +265,7 @@ class FeatureSelector:
         
         return self.best_features, self.best_model, self.best_adj_r2
     
-    def save_results(self):
+    def save_results(self) -> None:
         """Save analysis results"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         results_file = os.path.join(self.output_dir, f'feature_selection_results_{timestamp}.txt')
@@ -273,22 +275,36 @@ class FeatureSelector:
             f.write("=======================\n\n")
             
             f.write("Best Feature Combination:\n")
-            for feature in self.best_features:
-                if feature.startswith('Warengruppe_'):
-                    group_nr = int(feature.split('_')[1])
-                    group_name = get_warengruppe_name(group_nr)
-                    f.write(f"- {feature} ({group_name})\n")
-                else:
-                    f.write(f"- {feature}\n")
+            if isinstance(self.best_features, list) and self.best_features:
+                for feature in self.best_features:
+                    if isinstance(feature, str) and feature.startswith('Warengruppe_'):
+                        try:
+                            group_nr = int(feature.split('_')[1])
+                            group_name = get_warengruppe_name(group_nr)
+                            f.write(f"- {feature} ({group_name})\n")
+                        except (IndexError, ValueError):
+                            f.write(f"- {feature}\n")
+                    else:
+                        f.write(f"- {feature}\n")
+            else:
+                f.write("No features selected - model not fitted\n")
             
             f.write(f"\nAdjusted R²: {self.best_adj_r2:.4f}\n")
             
             f.write("\nModel Coefficients:\n")
-            coef_dict = dict(zip(self.best_features, self.best_model.coef_))
-            for feature, coef in coef_dict.items():
-                f.write(f"{feature}: {coef:.4f}\n")
-            
-            f.write(f"\nIntercept: {self.best_model.intercept_:.4f}\n")
+            if isinstance(self.best_features, list) and self.best_features and self.best_model is not None:
+                features_list = list(self.best_features)
+                coefficients = self.best_model.coef_
+                if len(features_list) == len(coefficients):
+                    coef_dict = dict(zip(features_list, coefficients))
+                    for feature, coef in coef_dict.items():
+                        f.write(f"{feature}: {coef:.4f}\n")
+                    
+                    f.write(f"\nIntercept: {self.best_model.intercept_:.4f}\n")
+                else:
+                    f.write("Error: Mismatch between features and coefficients\n")
+            else:
+                f.write("No model coefficients available - model not fitted\n")
         
         print(f"\nResults saved to: {results_file}")
 

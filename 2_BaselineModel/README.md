@@ -1,83 +1,41 @@
-# Baseline Model: Lineare Regression
+# Baseline-Modell für Bäckerei-Verkaufsprognosen
 
-## Zwei Ansätze
+Dieses Verzeichnis enthält die Implementierung des Baseline-Modells für die Vorhersage von Bäckerei-Verkäufen. Das Modell verwendet grundlegende statistische Methoden und Wochentagsmuster, um Verkaufsprognosen zu erstellen.
 
-### 1. Komplettes Modell (`model_training.py`)
-Nutzt alle verfügbaren Features für die Vorhersage.
+## Skript-Übersicht
 
-**Features:**
-- Numerische Features (10):
-  - Jahr, Monat, Wochentag
-  - Tag_im_Monat, Woche_im_Jahr, Quartal
-  - ist_Wochenende
-  - Temperatur, Bewoelkung, Windgeschwindigkeit
+### analyze_submission.py
+Analysiert die Vorhersageergebnisse und erstellt detaillierte Auswertungen der Modellperformance. Das Skript generiert verschiedene Visualisierungen und Metriken zur Bewertung der Vorhersagegenauigkeit.
 
-- Kategorische Features nach One-Hot-Encoding (19):
-  - Position_im_Monat (3: Anfang, Mitte, Ende)
-  - Jahreszeit (4: winter, spring, summer, fall)
-  - Temp_Kategorie_Basis (3: kalt, mild, warm)
-  - Temp_Kategorie_Saison (3: kalt, mild, warm)
-  - Warengruppe (6: 1-6)
+### simple_weekday_model.py
+Implementiert ein einfaches wochentagsbasiertes Vorhersagemodell. Dieses Modell berücksichtigt die durchschnittlichen Verkaufszahlen pro Wochentag als Grundlage für die Prognosen.
 
-**Performance auf Testdaten (2017-08-01 bis 2018-07-31):**
-- RMSE: 81.67
-- MAE: 50.98
-- R²: 0.6885
+### simple_weekday_model_group1.py
+Eine Variation des Wochentagsmodells, speziell angepasst für die erste Produktgruppe. Enthält spezifische Anpassungen und Optimierungen für diese Produktkategorie.
 
-### 2. Vereinfachtes Modell (`evaluate_simple_model.py`)
-Nutzt nur die 5 wichtigsten Features, die durch Feature-Selektion identifiziert wurden.
+### model_training.py
+Hauptskript für das Training des Baseline-Modells. Beinhaltet die Datenaufbereitung, Modelltraining und Speicherung der trainierten Modelle.
 
-**Lineare Modellgleichung:**
-```
-Umsatz = 85.08 + 
-         23.87 × ist_Wochenende + 
-         69.39 × Jahreszeit_summer + 
-         306.89 × Warengruppe_2 + 
-         60.44 × Warengruppe_3 + 
-         177.19 × Warengruppe_5
-```
+### weekday_model_by_product.py
+Erweiterte Version des Wochentagsmodells, die separate Vorhersagen für jedes einzelne Produkt erstellt. Berücksichtigt produktspezifische Verkaufsmuster.
 
-**Interpretation:**
-- Grundumsatz: 85.08€ pro Tag
-- +23.87€ am Wochenende
-- +69.39€ im Sommer
-- Warengruppen-Effekte:
-  - Warengruppe 2: +306.89€
-  - Warengruppe 3: +60.44€
-  - Warengruppe 5: +177.19€
+### evaluate_simple_model.py
+Umfassendes Evaluierungsskript für das Baseline-Modell. Berechnet verschiedene Leistungsmetriken und erstellt Visualisierungen zur Modellbewertung.
 
-## Methodik
+## Verzeichnisstruktur
 
-### Datenaufteilung
-- Training: 01.07.2013 bis 31.07.2017
-- Test: 01.08.2017 bis 31.07.2018
+- `output/`: Enthält generierte Modellergebnisse und Vorhersagen
+- `visualizations/`: Speicherort für erzeugte Grafiken und Visualisierungen
 
-### Feature-Verarbeitung
-1. Numerische Features:
-   - Standardisierung (Mittelwert 0, Standardabweichung 1)
-   - Behandlung fehlender Werte durch Mittelwert
+## Verwendung
 
-2. Kategorische Features:
-   - One-Hot-Encoding
-   - Behandlung unbekannter Kategorien
+1. Führen Sie zuerst `model_training.py` aus, um das Baseline-Modell zu trainieren
+2. Nutzen Sie `weekday_model_by_product.py` oder `simple_weekday_model.py` für Vorhersagen
+3. Analysieren Sie die Ergebnisse mit `analyze_submission.py`
+4. Verwenden Sie `evaluate_simple_model.py` für eine detaillierte Modellbewertung
 
-### Modelltraining
-```python
-from sklearn.linear_model import LinearRegression
-model = LinearRegression()
-model.fit(X_train, y_train)
-```
+## Hinweise
 
-### Evaluationsmetriken
-- RMSE (Root Mean Squared Error)
-- MAE (Mean Absolute Error)
-- R² Score
-- Adjustiertes R² (für Feature-Selektion)
-
-## Visualisierungen
-- Feature Importance (`feature_importance.png`)
-- Vorhersagen vs. tatsächliche Werte (`predictions_vs_actual.png`)
-- RMSE pro Warengruppe (`rmse_by_group.png`)
-- R² Score pro Warengruppe (`r2_by_group.png`)
-- Vorhersagefehler pro Warengruppe (`prediction_errors.png`)
-- Zeitreihenvergleich pro Warengruppe (`time_series_comparison_group_*.png`)
+- Die Modelle basieren hauptsächlich auf Wochentagsmustern
+- Verschiedene Varianten des Modells sind für unterschiedliche Anwendungsfälle verfügbar
+- Die Evaluierungsskripte bieten umfangreiche Möglichkeiten zur Performanceanalyse
