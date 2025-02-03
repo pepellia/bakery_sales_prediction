@@ -1,0 +1,18 @@
+Easter Saturday Sales Analysis
+==============================
+
+Training Period:
+Average Sales: 386.62
+Max Sales: 703.46
+Min Sales: 58.54
+
+Validation Period:
+Average Sales: 330.40
+Max Sales: 558.63
+Min Sales: 85.36
+
+Predicted Period:
+Average Sales: 430.22
+Max Sales: 430.22
+Min Sales: 430.22
+

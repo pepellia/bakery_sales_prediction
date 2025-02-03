@@ -1,0 +1,24 @@
+Summary Statistics for neural_network_model_v14
+==================================================
+
+Training Period:
+  Mean Sales: 209.34
+  Std Dev: 147.77
+  Min Sales: 12.94
+  Max Sales: 1879.46
+  Total Days: 1462
+
+Validation Period:
+  Mean Sales: 196.21
+  Std Dev: 130.11
+  Min Sales: 7.05
+  Max Sales: 1432.42
+  Total Days: 357
+
+Predicted Period:
+  Mean Sales: 163.75
+  Std Dev: 104.70
+  Min Sales: 0.00
+  Max Sales: 736.75
+  Total Days: 355
+

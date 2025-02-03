@@ -1,0 +1,33 @@
+Easter Saturday Predictions:
+          Datum Warengruppe_Name      Umsatz
+255  2019-04-20             Brot  292.502251
+610  2019-04-20         Brötchen  581.761212
+965  2019-04-20        Croissant  335.309889
+1319 2019-04-20       Konditorei  260.686083
+1674 2019-04-20           Kuchen  452.056853
+
+Windjammer Parade Predictions:
+          Datum Warengruppe_Name      Umsatz
+324  2019-06-29             Brot  281.710908
+679  2019-06-29         Brötchen  570.969869
+1034 2019-06-29        Croissant  324.518547
+1388 2019-06-29       Konditorei  249.894740
+1743 2019-06-29           Kuchen  441.265510
+
+Historical Easter Saturday Sales:
+               mean    std     min     max
+Warengruppe                               
+Brot         298.54  69.35  233.44  396.16
+Brötchen     658.35  51.69  603.70  703.46
+Croissant    294.09  41.80  262.84  355.36
+Konditorei    77.76  27.19   58.54   96.99
+Kuchen       449.91  46.33  397.75  495.48
+
+Historical Windjammer Parade Sales:
+               mean    std     min     max
+Warengruppe                               
+Brot         194.54  35.11  160.68  234.37
+Brötchen     743.20  97.58  631.28  861.86
+Croissant    342.30  52.61  274.59  396.51
+Konditorei    74.76  23.58   51.42  105.34
+Kuchen       444.39  40.29  402.98  498.13
