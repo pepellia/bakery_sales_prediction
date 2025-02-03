@@ -114,3 +114,36 @@
     - Ridge Regression
     - Lasso Regression
     - Elastic Net
+
+## Erkannte Verkaufsspitzen (Stand: Jan 2024)
+### Identifizierte Spitzen im Trainingszeitraum (2013-2017)
+- Sehr hohe Verkaufsspitzen (> 2 Standardabweichungen über Durchschnitt)
+- Potenzielle Gründe analysieren (Feiertage, Events, etc.)
+- Mögliche neue Features:
+    - [ ] Ist_Spitzentag (Boolean basierend auf historischen Spitzen)
+    - [ ] Tage_bis_nächster_Spitzentag
+    - [ ] Tage_seit_letztem_Spitzentag
+    - [ ] Spitzentag_Kategorie (basierend auf historischer Höhe)
+
+### Spitzentage-Analyse
+- [ ] Muster in Spitzentagen identifizieren:
+    - Wochentag-Verteilung
+    - Saisonale Häufung
+    - Korrelation mit bekannten Events
+- [ ] Feature für "ähnliche Tage" entwickeln:
+    - Basierend auf historischen Spitzen
+    - Ähnlichkeitsmaß definieren
+    - Gewichtung nach zeitlicher Nähe
+
+### Warengruppen-spezifische Spitzen
+- [ ] Analyse pro Warengruppe:
+    - Unterschiedliche Spitzentage?
+    - Unterschiedliche Intensität?
+    - Korrelation zwischen Warengruppen an Spitzentagen
+- [ ] Spezifische Features pro Warengruppe entwickeln
+
+### Nächste Schritte
+1. Detaillierte Analyse aller Spitzentage
+2. Kategorisierung der Spitzen (Höhe, Grund, Muster)
+3. Integration in Feature Engineering Pipeline
+4. Evaluation des Einflusses auf Modellperformance
