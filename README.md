@@ -6,15 +6,69 @@ https://github.com/pepellia/bakery_sales_prediction
 
 ## Description
 
-This project focuses on sales forecasting for a bakery branch, utilizing historical sales data spanning from July 1, 2013, to July 30, 2018, to inform inventory and staffing decisions. We aim to predict future sales for six specific product categories: Bread, Rolls, Croissants, Confectionery, Cakes, and Seasonal Bread. Our methodology integrates statistical and machine learning techniques, beginning with a baseline linear regression model to identify fundamental trends, and progressing to a sophisticated neural network designed to discern more nuanced patterns and enhance forecast precision. The initiative encompasses data preparation, crafting bar charts with confidence intervals for visualization, and fine-tuning models to assess their performance on test data from August 1, 2018, to July 30, 2019, using the Mean Absolute Percentage Error (MAPE) metric for each product category.
+### Summary
+A sophisticated time series forecasting project that predicts daily sales for six bakery product categories in Kiel, Germany. The project leverages local event data (Kieler Woche, Windjammer), weather conditions, and holiday patterns to enhance prediction accuracy, achieving competitive MAPE scores across all product categories. Through systematic experimentation with multiple modeling approaches, we developed an advanced neural network architecture that effectively captures both seasonal patterns and event-driven sales fluctuations.
+
+### Detailed Overview
+This project implements a multi-stage approach to sales forecasting for a bakery branch, analyzing historical data from July 2013 to July 2018. The forecasting pipeline consists of:
+
+1. **Data Integration & Preprocessing**
+   - Core sales data for six product categories: Bread, Rolls, Croissants, Confectionery, Cakes, and Seasonal Bread
+   - Weather data integration (temperature, precipitation)
+   - Local event calendars (Kieler Woche festival, Windjammer events)
+   - Public and school holiday schedules for Schleswig-Holstein
+
+2. **Feature Engineering**
+   - Temporal features (day of week, month, season)
+   - Weather-based features with seasonal temperature categorization
+   - Event proximity indicators
+   - Holiday impact modeling
+   - Product availability patterns
+   - Rolling statistics and lag features
+   - Cyclical time encoding
+
+3. **Model Evolution**
+   We explored four distinct modeling approaches:
+   
+   a. **Linear Regression Models**
+      - Baseline implementation for trend analysis
+      - Separate models per product category
+      - Integration of basic temporal and event features
+   
+   b. **Fourier Analysis**
+      - Decomposition of time series into seasonal components
+      - Capture of periodic patterns in sales data
+      - Integration with weather and event effects
+   
+   c. **Neural Network Architecture**
+      - Our best-performing approach (v14)
+      - Comprehensive event integration (Windjammer, Public Holidays, School Holidays)
+      - Weather and Kieler Woche festival effects
+      - Date-based train/validation split strategy
+      - Optimized neural network architecture
+      - Robust evaluation framework
+   
+   d. **Hybrid Models**
+      - Combination of Fourier analysis and neural networks
+      - Attempted to leverage strengths of both approaches
+      - Integration of frequency-domain features
+   
+4. **Evaluation**
+   - Test period: August 2018 to July 2019
+   - Primary metric: Mean Absolute Percentage Error (MAPE)
+   - Separate evaluation for each product category
+   - Visualization tools for model performance analysis
+   - Comparative analysis across all modeling approaches
+
+The final implementation (neural_network_model_v14) demonstrates superior performance by effectively integrating multiple event types (Windjammer Parade, public holidays, school holidays) along with weather data and the Kieler Woche festival impact, providing reliable forecasts for inventory management and staff planning.
 
 ### Task Type
 
-Regression
+Time Series Forecasting (Multi-output regression with temporal dependencies)
 
 ### Results Summary
 
--   **Best Model:** [neural_network_model_v3.py]
+-   **Best Model:** [neural_network_model_v14.py]
 -   **Evaluation Metric:** MAPE
 -   **Result by Category** (Identifier):
     -   **Bread** (1): [52,9]%
