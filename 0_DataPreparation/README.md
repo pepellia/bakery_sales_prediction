@@ -34,6 +34,7 @@ This directory contains all data preparation and feature engineering code for th
     ├── linear_regression/      # Basic model results
     ├── linear_regression_v2/   # Enhanced model results
     └── sales_analysis/         # Sales patterns visualization
+```
 
 ## Python Scripts
 
