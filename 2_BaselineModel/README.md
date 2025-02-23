@@ -1,41 +1,92 @@
-# Baseline-Modell für Bäckerei-Verkaufsprognosen
+# Baseline Model for Bakery Sales Prediction
 
-Dieses Verzeichnis enthält die Implementierung des Baseline-Modells für die Vorhersage von Bäckerei-Verkäufen. Das Modell verwendet grundlegende statistische Methoden und Wochentagsmuster, um Verkaufsprognosen zu erstellen.
+This directory contains the implementation of baseline models for bakery sales prediction. The models primarily utilize weekday patterns and basic statistical methods to establish fundamental sales forecasting benchmarks.
 
-## Skript-Übersicht
+## Directory Structure
 
-### analyze_submission.py
-Analysiert die Vorhersageergebnisse und erstellt detaillierte Auswertungen der Modellperformance. Das Skript generiert verschiedene Visualisierungen und Metriken zur Bewertung der Vorhersagegenauigkeit.
+```
+2_BaselineModel/
+├── analysis/
+│   ├── results/
+│   │   └── linear_regression/
+│   │       └── simple_weekday_model/
+│   │           └── special_events_analysis.txt
+│   │
+│   └── scripts/
+│       └── linear_regression/
+│           └── analyze_submission.py
+│
+├── Core Models
+│   ├── simple_weekday_model.py           # Basic weekday-based model
+│   ├── simple_weekday_model_group1.py    # Specialized for product group 1
+│   └── weekday_model_by_product.py       # Product-specific predictions
+│
+└── Evaluation
+    ├── analyze_submission.py             # Results analysis
+    ├── evaluate_simple_model.py & .ipynb # Model evaluation
+    └── model_training.py & .ipynb        # Model training pipeline
+```
 
-### simple_weekday_model.py
-Implementiert ein einfaches wochentagsbasiertes Vorhersagemodell. Dieses Modell berücksichtigt die durchschnittlichen Verkaufszahlen pro Wochentag als Grundlage für die Prognosen.
+## Scripts Overview
 
-### simple_weekday_model_group1.py
-Eine Variation des Wochentagsmodells, speziell angepasst für die erste Produktgruppe. Enthält spezifische Anpassungen und Optimierungen für diese Produktkategorie.
+### Core Model Implementations
+- `simple_weekday_model.py`: Basic model using average sales by weekday
+- `simple_weekday_model_group1.py`: Specialized version optimized for product group 1
+- `weekday_model_by_product.py`: Enhanced version with product-specific patterns
 
-### model_training.py
-Hauptskript für das Training des Baseline-Modells. Beinhaltet die Datenaufbereitung, Modelltraining und Speicherung der trainierten Modelle.
+### Training and Evaluation
+- `model_training.py` & `.ipynb`: Main training pipeline
+  - Data preprocessing
+  - Model training
+  - Model persistence
+  
+- `evaluate_simple_model.py` & `.ipynb`: Comprehensive evaluation suite
+  - Performance metrics calculation
+  - Model validation
+  - Results visualization
 
-### weekday_model_by_product.py
-Erweiterte Version des Wochentagsmodells, die separate Vorhersagen für jedes einzelne Produkt erstellt. Berücksichtigt produktspezifische Verkaufsmuster.
+### Analysis Tools
+- `analyze_submission.py`: Prediction analysis tool
+  - Detailed performance metrics
+  - Error analysis
+  - Special events impact assessment
 
-### evaluate_simple_model.py
-Umfassendes Evaluierungsskript für das Baseline-Modell. Berechnet verschiedene Leistungsmetriken und erstellt Visualisierungen zur Modellbewertung.
+## Documentation
+- `INSTRUCTIONS.md`: Detailed setup and execution instructions
 
-## Verzeichnisstruktur
+## Usage
 
-- `output/`: Enthält generierte Modellergebnisse und Vorhersagen
-- `visualizations/`: Speicherort für erzeugte Grafiken und Visualisierungen
+1. Model Training:
+   ```bash
+   python model_training.py
+   ```
+   - Creates baseline models for each product category
+   - Saves trained models in designated output directory
 
-## Verwendung
+2. Generate Predictions:
+   ```bash
+   python weekday_model_by_product.py  # For product-specific predictions
+   # or
+   python simple_weekday_model.py      # For basic weekday-based predictions
+   ```
 
-1. Führen Sie zuerst `model_training.py` aus, um das Baseline-Modell zu trainieren
-2. Nutzen Sie `weekday_model_by_product.py` oder `simple_weekday_model.py` für Vorhersagen
-3. Analysieren Sie die Ergebnisse mit `analyze_submission.py`
-4. Verwenden Sie `evaluate_simple_model.py` für eine detaillierte Modellbewertung
+3. Evaluate Results:
+   ```bash
+   python evaluate_simple_model.py
+   python analyze_submission.py
+   ```
 
-## Hinweise
+## Key Features
 
-- Die Modelle basieren hauptsächlich auf Wochentagsmustern
-- Verschiedene Varianten des Modells sind für unterschiedliche Anwendungsfälle verfügbar
-- Die Evaluierungsskripte bieten umfangreiche Möglichkeiten zur Performanceanalyse
+- Weekday-based sales pattern analysis
+- Product-specific modeling capabilities
+- Special events consideration
+- Comprehensive evaluation metrics
+- Interactive notebooks for analysis and visualization
+
+## Notes
+
+- Models primarily rely on weekday patterns and basic statistical features
+- Different model variants available for specific use cases
+- Evaluation scripts provide detailed performance analysis
+- Results and analysis are stored in the `analysis/results/` directory
